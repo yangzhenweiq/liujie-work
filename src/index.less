@@ -1,0 +1,195 @@
+.content {
+  padding-bottom: 22px;
+}
+.container {
+  padding: 10px 0 0 0;
+  max-width: 960px;
+  margin: 0 auto;
+  .markedWords{
+    font-family: PingFangSC-Regular;
+    font-size: 12px;
+    line-height: 22px;
+    color: #8494a6;
+  }
+}
+.title {
+  font-size: 22px;
+  text-align: center;
+  padding: 50px 0;
+  span {
+    border-left: 4px solid @primary-color;
+    padding-left: 7px;
+  }
+}
+.deleteBtn {
+  font-size: 16px;
+  margin: 0 10px;
+  cursor: pointer;
+  color: @text-color-secondary;
+  &:hover {
+    color: @error-color;
+  }
+}
+.addBtn {
+  font-size: 14px;
+  color: @primary-color;
+  cursor: pointer;
+  margin-bottom: 20px;
+  i {
+    margin-right: 5px;
+  }
+}
+.deleteQABtn {
+  position: relative;
+  top: -10px;
+}
+.option {
+  margin: 0;
+}
+/* 返回 */
+.question {
+  zoom: 1;
+  border: 1px solid @border-color-base;
+  border-radius: 3px;
+  .questionContent {
+    padding: 20px 35px 0;
+  }
+  .questionDelete {
+    padding: 15px 35px;
+    border-top: 1px solid @border-color-base;
+  }
+  .questionType {
+    font-size: 16px;
+    text-indent: -8px;
+  }
+}
+
+/* 分钟input */
+.timeInput {
+  width: 100%;
+}
+.inputScore {
+  width: 65%;
+  vertical-align: middle;
+}
+.timeContainer {
+  :global {
+    .ant-form-item-control {
+      text-align: right;
+      padding-right: 1px;
+    }
+    .ant-form-explain {
+      text-align: left;
+    }
+  }
+}
+
+.timeText {
+  position: absolute;
+  right: -30px;
+  top: -10px;
+}
+.addonScore {
+  margin-left: 5px;
+  vertical-align: middle;
+}
+
+@media screen and (max-width: 870px) {
+  .timeInput {
+    width: 50%;
+  }
+  .addonTime {
+    width: 45%;
+  }
+}
+
+@media screen and (max-width: 993px) {
+  .addonScore {
+    padding: 0 1px;
+  }
+}
+@media screen and (max-width: 940px) {
+  .inputScore {
+    width: 50%;
+  }
+  .addonScore {
+    padding: 0 3px;
+  }
+  .question {
+    padding: 20px 10px;
+  }
+}
+
+/* 标题清除符号 */
+.titleInput {
+  :global(.ant-form-item-children:hover) {
+    .titleClear {
+      display: block;
+    }
+  }
+}
+.titleClear {
+  display: none;
+  position: absolute;
+  right: 13px;
+  top: 3px;
+  cursor: pointer;
+  color: @text-color-secondary;
+}
+.titleSize {
+  position: absolute;
+  right: 8px;
+  top: 2px;
+  line-height: 16px;
+  font-size: 12px;
+  color: @text-color-secondary;
+}
+.titleInput {
+  :global {
+    .ant-input {
+      padding-right: 65px;
+    }
+  }
+}
+/* ie 兼容性 */
+.timeContainer {
+  :global {
+    .ant-form-item-label {
+      vertical-align: middle;
+    }
+    .ant-form-item-control {
+      vertical-align: middle;
+    }
+  }
+}
+/* 表单样式 */
+.content {
+  :global {
+    .ant-form-item {
+      margin-bottom: 19px;
+    }
+    .ant-form-item-with-help {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.footerBtn {
+  margin-top: 30px;
+  p {
+    height: 30px;
+    color: @error-color;
+  }
+  button {
+    margin-right: 10px;
+    padding: 0 30px;
+  }
+  .footerBack {
+    cursor: pointer;
+    margin-left: 10px;
+    color: @text-color-secondary;
+    &:hover {
+      color: @primary-color;
+    }
+  }
+}

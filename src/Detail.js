@@ -1,13 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import axios from 'axios'
-
-import RouterConfig from './Router_index.js';
-
 import './index.css';
-// import App from './App';
-import * as serviceWorker from './serviceWorker';
-
 import 'moment/locale/zh-cn';
 import locale from 'antd/lib/date-picker/locale/zh_CN';
 
@@ -15,58 +8,47 @@ import 'antd/dist/antd.css';
 
 import moment from 'moment'
 
-import { Form, Input, Button, Select, DatePicker, Row, Col,} from 'antd';
-import { PlusCircleOutlined } from '@ant-design/icons';
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { FormInstance } from 'antd/lib/form';
+import { Form, Input, Button, Select, DatePicker, Row, Col, message,} from 'antd';
+import { PlusCircleOutlined ,MinusCircleOutlined} from '@ant-design/icons';
 
 const { Option } = Select;
-
-const layout = {
-  labelCol: { span: 8 },
-  wrapperCol: { span: 8 },
-};
-
-const titleLayout = {
-  labelCol: {
-    xs: { span: 3 },
-    sm: { span: 3 }
-  },
-  wrapperCol: {
-    xs: { span: 19 },
-    sm: { span: 19 }
-  }
-};
 
 const { TextArea } = Input;
 
 const rules = [{ required: true }];
 
-class Demo extends React.Component {
+class Hatchform extends React.Component {
   
-  // formRef = React.createRef();()
   constructor(props) {
     super(props);
     this.state = {
       value:1,
     };
   }
+  // formRef = React.createRef();()
   formRef = React.createRef();;
   componentDidMount(){
+    if(this.props.location.query){
+      if(this.props.location.query.status==="updata"){
+        this.getDetailData();
+    }
+    }else{
+      this.props.history.push('/list')
+    }
     
   }
   getDetailData=() =>{
     axios({
       method: 'GET',
-      url: "/hatchrecords/1/detail",
+      url: `/hatchrecords/${this.props.location.query.id}/detail`,
     })
     .then(res=>{
       console.log(res.data);
-      res.data.end_time=moment(res.data.end_time, 'YYYY-MM-DD')
-      res.data.create_time=moment(res.data.create_time, 'YYYY-MM-DD')
-      res.data.begin_time=moment(res.data.begin_time, 'YYYY-MM-DD')
+      res.data.data.end_time=moment(res.data.data.end_time, 'YYYY-MM-DD')
+      res.data.data.create_time=moment(res.data.data.create_time, 'YYYY-MM-DD')
+      res.data.data.begin_time=moment(res.data.data.begin_time, 'YYYY-MM-DD')
       this.formRef.current.setFieldsValue({
-        ...res.data
+        ...res.data.data
       });
     })
     .catch(err=>{
@@ -74,24 +56,52 @@ class Demo extends React.Component {
       
     })
   }
+  // onValuesChange=(value,values)=>{
+  //   console.log(this.formRef.current.getFieldsValue().batch);
+  //   console.log(this.formRef.current.getFieldsValue().fuhuashilu[0].maodanshu);
+    
+  //   this.formRef.current.setFieldsValue({
+  //     batch:this.formRef.current.getFieldsValue().batch
+  //   })
+  // }
+      
   onFinish = values => {
-    axios({
-      method: 'POST',
-      url: "/hatchrecords/create/",
-      data: {
-        ...values
-      },
-    })
-    .then(res=>{
-      console.log(res);
-      
-    })
-    .catch(err=>{
-      console.log(err);
-      
-    })
-    
-    
+      if(this.props.location.query.status==="updata"){
+
+        axios({
+          method: 'PUT',
+          url: `/hatchrecords/${this.props.location.query.id}/update`,
+          data: {
+            ...values
+          },
+        })
+        .then(res=>{
+          console.log(res);
+          message.success("修改成功")
+          this.props.history.push('/recordlist')
+        })
+        .catch(err=>{
+          console.log(err);
+          
+        })
+      }
+      else{
+        axios({
+          method: 'POST',
+          url: "/hatchrecords/create/",
+          data: {
+            ...values
+          },
+        })
+        .then(res=>{
+          console.log(res);
+          message.success("新增成功")
+          this.props.history.push('/recordlist')     
+        })
+        .catch(err=>{
+          console.log(err);         
+        })
+      }  
   };
 
   onReset = () => {
@@ -114,10 +124,7 @@ class Demo extends React.Component {
       );
     }    
 
-    onfuhuamoshiChange=(value)=>{
-      console.log(value);
-      
-    }
+
   dateChange=(value)=>{
     let gouwen = moment(value).valueOf()
     let chumiaoshijianchuo = gouwen + 21 * 3600 * 24 * 1000;
@@ -128,14 +135,21 @@ class Demo extends React.Component {
       end_time:moment(chumiao, 'YYYY-MM-DD'),
     });
   }
-
   render() {
-    const {
-      value
-    }=this.state;
+    const layout = {
+        labelCol: { span: 8 },
+        wrapperCol: { span: 8 },
+    };
+    
     return (
       <div>
-      <Form {...layout} ref={this.formRef} name="control-ref" onFinish={this.onFinish} >
+      <Form 
+      {...layout} 
+      ref={this.formRef} 
+      name="control-ref" 
+      onFinish={this.onFinish} 
+      onValuesChange={this.onValuesChange}
+      >
         <Form.Item label="来蛋时间" name="create_time" initialValue={moment()}>
         <DatePicker
           format="YYYY-MM-DD"
@@ -151,10 +165,9 @@ class Demo extends React.Component {
         <Form.Item name="incubator" label="孵化机" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
-        <Form.Item name="hatch_pattern" initialValue={value} label="孵化模式" rules={[{ required: true }]}>
+        <Form.Item name="hatch_pattern" initialValue={this.state.value} label="孵化模式" rules={[{ required: true }]}>
           <Select
             placeholder="请选择孵化模式"
-            onChange={this.onfuhuamoshiChange}
             allowClear
           > 
             <Option value={1}>冬温大蛋</Option>
@@ -234,7 +247,7 @@ class Demo extends React.Component {
                     <Form.Item
                       label="活精蛋数"
                       name={[field.name, "huojingdanshu"]}
-                      fieldKey={[field.fieldKey, "wujingdanshu"]}
+                      fieldKey={[field.fieldKey, "huojingdanshu"]}
                     >
                       <Input />
                     </Form.Item>
@@ -251,6 +264,7 @@ class Demo extends React.Component {
                       label="毛蛋数"
                       name={[field.name, "maodanshu"]}
                       fieldKey={[field.fieldKey, "maodanshu"]}
+                    //   initialValue={this.formRef.current.getFieldsValue().fuhuashilu[index].huojingdanshu*1+this.formRef.current.getFieldsValue().fuhuashilu[index].wujingdanshu*1}
                     >
                       <Input />
                     </Form.Item>
@@ -344,16 +358,5 @@ class Demo extends React.Component {
   }
 }
 
-// ReactDOM.render(<Demo />, document.getElementById('root'),);
-
-const domContainer = document.querySelector('#root');
-ReactDOM.render(<RouterConfig />, domContainer);
-
-
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
-
-
+export default Hatchform
 
